@@ -35,19 +35,19 @@ namespace MyCompanyInThePocket.iOS.Services
         {
             try
             {
-				var result = await _eventStore.RequestAccessAsync(EKEntityType.Reminder);
+                var result = await _eventStore.RequestAccessAsync(EKEntityType.Reminder);
                 if (result.Item1)
                 {
-					EKReminder reminder = null;
-					var predicat = _eventStore.PredicateForReminders(null);
+                    EKReminder reminder = null;
+                    var predicat = _eventStore.PredicateForReminders(null);
 
-					var reminders = await _eventStore.FetchRemindersAsync(predicat);
-					reminder = reminders.Where((EKReminder arg) => !arg.Completed && arg.Title == title).FirstOrDefault();
+                    var reminders = await _eventStore.FetchRemindersAsync(predicat);
+                    reminder = reminders.Where((EKReminder arg) => !arg.Completed && arg.Title == title).FirstOrDefault();
 
-					if (reminder == null)
-					{
-						reminder = EKReminder.Create(_eventStore);
-					}
+                    if (reminder == null)
+                    {
+                        reminder = EKReminder.Create(_eventStore);
+                    }
 
                     reminder.Title = title;
                     EKAlarm timeToRing = new EKAlarm();
@@ -58,10 +58,10 @@ namespace MyCompanyInThePocket.iOS.Services
                     NSError error;
                     _eventStore.SaveReminder(reminder, true, out error);
 
-					if (error != null)
-					{
-						Debug.WriteLine(error.Description);
-					}
+                    if (error != null)
+                    {
+                        Debug.WriteLine(error.Description);
+                    }
                 }
             }
             catch (Exception ex)
@@ -80,7 +80,7 @@ namespace MyCompanyInThePocket.iOS.Services
                     {
                         return;
                     }
-                    
+
                     var calendar = _eventStore.GetCalendar(AcraCalendarIdentifier);
                     CGColor colorToUse = null;
                     if (calendar != null)
@@ -99,16 +99,20 @@ namespace MyCompanyInThePocket.iOS.Services
 
                     // now recreate a calendar !
                     calendar = EKCalendar.FromEventStore(_eventStore);
-                    calendar.Title = "ACRA du " + DateTime.Now.ToString("g");
+                    calendar.Title = "ACRA du " + DateTime.Now.ToString("g", new System.Globalization.CultureInfo("fr"));
                     if (colorToUse != null)
                     {
                         calendar.CGColor = colorToUse;
                     }
 
-                    var sourceToSet = _eventStore.Sources
-                        .FirstOrDefault(s =>
-                       (s.SourceType == EKSourceType.CalDav && s.Title.Equals("iCloud", StringComparison.InvariantCultureIgnoreCase))
-                       || s.SourceType == EKSourceType.Local);
+                    EKSource[] sources = _eventStore.Sources;
+                    var sourceToSet = sources
+                        .FirstOrDefault(s => s.SourceType == EKSourceType.CalDav && s.Title.Equals("iCloud", StringComparison.InvariantCultureIgnoreCase));
+
+                    if (sourceToSet == null)
+                    {
+                        sourceToSet = sources.FirstOrDefault(s => s.SourceType == EKSourceType.Local);
+                    }
 
                     if (sourceToSet == null)
                     {
@@ -116,7 +120,6 @@ namespace MyCompanyInThePocket.iOS.Services
                     }
 
                     calendar.Source = sourceToSet;
-
                     NSError error;
                     _eventStore.SaveCalendar(calendar, true, out error);
                     AcraCalendarIdentifier = calendar.CalendarIdentifier;
@@ -170,7 +173,7 @@ namespace MyCompanyInThePocket.iOS.Services
                         }
                         else
                         {
-							//TODO : localisation
+                            //TODO : localisation
                             toSave.Title = "[FERIE] " + appointData.Title;
                         }
 
@@ -178,14 +181,18 @@ namespace MyCompanyInThePocket.iOS.Services
 
                         toSave.Calendar = calendar;
 
-                        NSError errorEvent;
-                        _eventStore.SaveEvent(toSave, EKSpan.ThisEvent, out errorEvent);
+                        NSError errorCommit;
+                        _eventStore.SaveEvent(toSave, EKSpan.ThisEvent, out errorCommit);
                     }
                 }
+
+                NSError errorEvent;
+
+                _eventStore.Commit(out errorEvent);
             }
             catch (Exception e)
             {
-				//TODO : localisation
+                //TODO : localisation
                 await App.Instance.AlertService.ShowExceptionMessageAsync(e, "Impossible de renseigner votre calendrier iOS");
             }
         }

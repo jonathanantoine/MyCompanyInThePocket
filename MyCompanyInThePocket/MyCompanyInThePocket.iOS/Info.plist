@@ -55,6 +55,8 @@
 	<string>Resources/Media.xcassets/AppIcons.appiconset</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>Ajouter/Enlever les événements ACRA dans votre calendrier.</string>
+	<key>CFBundleExecutable</key>
+	<string></string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

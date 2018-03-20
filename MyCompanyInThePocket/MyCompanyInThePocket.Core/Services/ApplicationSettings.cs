@@ -32,7 +32,7 @@ namespace MyCompanyInThePocket.Core
 		{
 			get
 			{
-				return AppSettings.GetValueOrDefault(nameof(IsIntegrationToReminderEnabled), true);
+				return AppSettings.GetValueOrDefault(nameof(IsIntegrationToReminderEnabled), false);
 			}
 			set
 			{

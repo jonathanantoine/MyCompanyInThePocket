@@ -20,7 +20,7 @@ namespace MyCompanyInThePocket.iOS.Services
 
         public static string AcraCalendarIdentifier
         {
-            get { return CrossSettings.Current.GetValueOrDefault<string>(nameof(AcraCalendarIdentifier), ""); }
+            get { return CrossSettings.Current.GetValueOrDefault(nameof(AcraCalendarIdentifier), ""); }
             set { CrossSettings.Current.AddOrUpdateValue(nameof(AcraCalendarIdentifier), value); }
         }
 

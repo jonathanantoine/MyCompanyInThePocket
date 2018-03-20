@@ -6,42 +6,42 @@ namespace MyCompanyInThePocket.Core.ViewModels
 {
     public class StartupViewModel : BaseViewModel
     {
-		private readonly IAuthentificationService _authenService;
+        private readonly IAuthentificationService _authenService;
 
-		public StartupViewModel()
-		{
-			_authenService = App.Instance.GetInstance<IAuthentificationService>();
-			GoToNextPageCommand = new RelayCommand(GoToNextPage);
-		}
+        public StartupViewModel()
+        {
+            _authenService = App.Instance.GetInstance<IAuthentificationService>();
+            GoToNextPageCommand = new RelayCommand(GoToNextPage);
+        }
 
-		public ICommand GoToNextPageCommand
-		{
-			get; private set;
-		}
+        public ICommand GoToNextPageCommand
+        {
+            get; private set;
+        }
 
-		private async void GoToNextPage()
-		{
-			try
-			{
+        private async void GoToNextPage()
+        {
+            try
+            {
                 IsBusy = true;
-				await _authenService.AuthenticateAsync();
+                await _authenService.AuthenticateAsync();
 
                 if (ApplicationSettings.IsBackgroundUpdateEnabled)
                 {
                     App.Instance.BackgroundTaskService.Register(ApplicationSettings.DelayBetweenTwoBackgroundUpdate);
                 }
 
-				ApplicationSettings.LaunchStartupScreen = false;
-				ShowViewModel<MainViewModel>();
-			}
-			catch (System.Exception ex)
-			{
-				//TODO : display error message
-			}
-			finally
-			{
+                ApplicationSettings.LaunchStartupScreen = false;
+                ShowViewModel<MainViewModel>();
+            }
+            catch (System.Exception)
+            {
+                //TODO : display error message
+            }
+            finally
+            {
                 IsBusy = false;
             }
-		}
-	}
+        }
+    }
 }

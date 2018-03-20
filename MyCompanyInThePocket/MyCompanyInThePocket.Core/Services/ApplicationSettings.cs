@@ -70,7 +70,7 @@ namespace MyCompanyInThePocket.Core
 		{
 			get
 			{
-				return AppSettings.GetValueOrDefault<bool>(nameof(LaunchStartupScreen), true);
+				return AppSettings.GetValueOrDefault(nameof(LaunchStartupScreen), true);
 			}
 			set
 			{
@@ -82,7 +82,7 @@ namespace MyCompanyInThePocket.Core
 		{
 			get
 			{
-				return AppSettings.GetValueOrDefault<DateTime>(nameof(LaunchStartupScreen), DateTime.MinValue);
+				return AppSettings.GetValueOrDefault(nameof(LaunchStartupScreen), DateTime.MinValue);
 			}
 			set
 			{
